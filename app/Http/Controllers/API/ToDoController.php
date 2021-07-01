@@ -4,8 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NoteRequest;
+use App\Http\Resources\NoteResource;
 use App\Models\Note;
-use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ToDoController extends Controller
 {
@@ -16,21 +17,11 @@ class ToDoController extends Controller
      */
     public function index()
     {
-        $notes = Note::paginate(4);
-        // return PostResource::collection($posts);
-        // dd($notes);
-        return $notes;
+        $notes = Note::paginate(15);
+        return NoteResource::collection($notes);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        dd("create");
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -40,9 +31,10 @@ class ToDoController extends Controller
      */
     public function store(NoteRequest $request)
     {
-        // dd($request);
         $note = Note::create($request->all());
-        return $note;
+        // return new NoteResource($note);
+        $data = ["status" => 200, 'data' =>  new NoteResource($note)];
+        return response()->json($data);
     }
 
     /**
@@ -51,22 +43,20 @@ class ToDoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Note $note)
     {
-        // dd("show" . $id);
-
+        dd($note);
+        if (Note::find($note->id)) {
+            return new NoteResource($note);
+        } else {
+            dd('dd');
+            return response()->json([
+                "message" => "Note not found",
+                "status" => 404,
+            ], Response::HTTP_NOT_FOUND);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        dd("edit" . $id);
-    }
 
     /**
      * Update the specified resource in storage.
@@ -75,10 +65,23 @@ class ToDoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(NoteRequest $request, $id)
     {
-        dd("update" . $id);
+        $requestedData = $request->all();
+        $note = Note::find($id);
+        if ($note) {
+            $note->update($requestedData);
+            $data = ["status" => 200, 'data' =>  new NoteResource($note)];
+            return response()->json($data);
+        } else {
+            return response()->json([
+                "message" => "Failed to update",
+                "status" => 404,
+            ], Response::HTTP_NOT_FOUND);
+        }
     }
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -88,6 +91,16 @@ class ToDoController extends Controller
      */
     public function destroy($id)
     {
-        dd('delete' . $id);
+        $note = Note::find($id);
+        if ($note) {
+            $note->delete();
+            $data = ["status" => 200, 'message' =>  "Deleted 'successfully"];
+            return response()->json($data);
+        } else {
+            return response()->json([
+                "message" => "Failed to Delete",
+                "status" => 404,
+            ], Response::HTTP_NOT_FOUND);
+        }
     }
 }

@@ -20,7 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::get('/', [ToDoController::class, 'index']);
 Route::get('/notes', [ToDoController::class, 'index']);
-Route::get('/notes/create', [ToDoController::class, 'create']);
 Route::get('/notes/{note}', [ToDoController::class, 'show']);
 Route::post('/notes', [ToDoController::class, 'store']);
 Route::put('/notes/{note}', [ToDoController::class, 'update']);
