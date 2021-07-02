@@ -32,7 +32,6 @@ class ToDoController extends Controller
     public function store(NoteRequest $request)
     {
         $note = Note::create($request->all());
-        // return new NoteResource($note);
         $data = ["status" => 200, 'data' =>  new NoteResource($note)];
         return response()->json($data);
     }
@@ -43,13 +42,12 @@ class ToDoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Note $note)
+    public function show($noteid)
     {
-        dd($note);
-        if (Note::find($note->id)) {
-            return new NoteResource($note);
+        $note = Note::find($noteid);
+        if ($note) {
+            return $note;
         } else {
-            dd('dd');
             return response()->json([
                 "message" => "Note not found",
                 "status" => 404,
