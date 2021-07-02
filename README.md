@@ -56,3 +56,7 @@ Run``` php artisan key:generate```
 Run ```php artisan migrate```
 
 Run ```php artisan serve```
+
+
+To Run Test 
+``` php artisan test ```
