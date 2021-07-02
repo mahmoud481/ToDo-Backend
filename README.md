@@ -43,7 +43,7 @@ now you can use this user in the laravel application.
 # Laravel
 ``` git clone https://github.com/mahmoud481/ToDo-Backend.git```
 
-```cd ToDo-Backend``
+```cd ToDo-Backend```
 
 ```composer install```
 
